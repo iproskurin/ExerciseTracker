@@ -19,8 +19,10 @@ package kuzki.net.exercisetracker;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
@@ -34,6 +36,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -537,7 +540,7 @@ public class MainActivity extends FragmentActivity implements
             mStartRecording = false;
             mStartStopRecording.setText(R.string.start);
             mStartStopRecording.setBackgroundColor(Color.GREEN);
-            mRecordRoute.name = "testRouteName";
+            this.getRouteName();
             mDbHelper.addRoute(mRecordRoute);
         } else {
             // Start clicked.
@@ -547,6 +550,33 @@ public class MainActivity extends FragmentActivity implements
             mStartStopRecording.setText(R.string.stop);
             mStartStopRecording.setBackgroundColor(Color.RED);
         }
+    }
+
+    private void getRouteName() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle("Route name");
+        alert.setMessage("Name your route");
+
+        // Set an EditText view to get user input
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                if (mRecordRoute != null) {
+                    mRecordRoute.name = input.getText().toString();
+                }
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+
+        alert.show();
     }
 
     public static Intent createIntent(Context context) {

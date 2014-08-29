@@ -98,20 +98,29 @@ public class RouteDatabaseHelper extends SQLiteOpenHelper {
     public List<Route> getRoutes() {
         List<Route> routeList = new ArrayList<Route>();
         // Select All Query
+        Log.d(TAG, "Reading all qeries from db..");
         String selectQuery = "SELECT  * FROM " + RoutesContract.RouteEntry.TABLE_NAME;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
+
+        Log.d(TAG, "Got cursor: " + cursor.getCount());
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                String routeName = cursor.getString(0);
-                Double lat = Double.parseDouble(cursor.getString(1));
-                Double lng = Double.parseDouble(cursor.getString(2));
-                Long time = Long.parseLong(cursor.getString(3));
-                Log.d(TAG, "Parsed cursor with lat: " + lat + " lng: " + lng + " time: " + time);
-                if (routeList.isEmpty() || routeList.get(routeList.size()-1).name != routeName) {
+                Log.d(TAG, "Parsed cursor with lat: ");
+                String routeName = cursor.getString(1);
+                Log.d(TAG, "name: " + routeName);
+                Double lat = Double.parseDouble(cursor.getString(2));
+                Log.d(TAG, "lat: " + lat);
+                Double lng = Double.parseDouble(cursor.getString(3));
+                Log.d(TAG, "lng: " + lng);
+                Long time = 0L;//Long.parseLong(cursor.getString(4));
+                Log.d(TAG, "time: " + time);
+
+                Log.d(TAG, "Current route list size: " + routeList.size());
+                if (routeList.isEmpty() || !routeList.get(routeList.size()-1).name.equals(routeName)) {
                     Log.d(TAG, "Creating new route with name: " + routeName);
                     routeList.add(new Route(routeName));
                 } else {

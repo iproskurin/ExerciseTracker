@@ -49,4 +49,9 @@ public class Route {
     public List<RoutePoint> getPoints() {
         return points;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }
