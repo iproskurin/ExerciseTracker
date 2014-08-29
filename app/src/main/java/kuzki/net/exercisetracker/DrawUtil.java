@@ -13,9 +13,43 @@ import org.achartengine.renderer.BasicStroke;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DrawUtil {
+
+    public static void drawChart(Route income_route,
+                                 Route base_route,
+                                 LinearLayout chartContainer,
+                                 android.content.Context context) {
+
+        if (income_route == null || base_route == null) {
+            return;
+        }
+        List<TimedLocation> tLocation = new ArrayList<TimedLocation>();
+        List<TimedLocation> tBaseLocation = new ArrayList<TimedLocation>();
+
+        List<Route.RoutePoint> route_points = income_route.getPoints();
+        if (route_points == null) {
+            return;
+        }
+        for (Route.RoutePoint point : route_points) {
+            tLocation.add(new TimedLocation(point.time / 1000, point.lat, point.lng));
+        }
+
+        List<Route.RoutePoint> base_points = base_route.getPoints();
+        if (base_points == null){
+            return;
+        }
+        for (Route.RoutePoint point : base_points) {
+            tBaseLocation.add(new TimedLocation(point.time, point.lat, point.lng));
+        }
+
+        drawChart(TimedLocation.convertToTimedDistance(tLocation),
+                TimedLocation.convertToTimedDistance(tBaseLocation),
+                chartContainer, context);
+
+    }
 
     public static void drawChart(List<TimedDistance> tDistance,
                                  List<TimedDistance> base,
@@ -24,7 +58,7 @@ public class DrawUtil {
 
         if (tDistance == null
                 || tDistance.size() == 0
-                || base == null || base.size()==0
+                || base == null || base.size() == 0
                 || chartContainer == null
                 || context == null) {
             return;
@@ -94,8 +128,8 @@ public class DrawUtil {
         multiRenderer.setYTitle("Distance to Origin");
 
         /***
-        * Customizing graphs
-        */
+         * Customizing graphs
+         */
         //setting text size of the title
         multiRenderer.setChartTitleTextSize(38);
         //setting text size of the axis title
@@ -137,12 +171,12 @@ public class DrawUtil {
         //setting no of values to display in y axis
         multiRenderer.setYLabels(10);
 
-        multiRenderer.setYAxisMax( ((int)(maxDistance/0.1) + 1) * 0.1);
+        multiRenderer.setYAxisMax(((int) (maxDistance / 0.1) + 1) * 0.1);
         //setting used to move the graph on xaxiz to .5 to the right
         multiRenderer.setXAxisMin(0);
         //setting used to move the graph on xaxiz to .5 to the right
 
-        multiRenderer.setXAxisMax((maxTime/60 + 1) * 60);
+        multiRenderer.setXAxisMax((maxTime / 60 + 1) * 60);
 
         //setting bar size or space between two bars
         //multiRenderer.setBarSpacing(0.5);
@@ -158,13 +192,13 @@ public class DrawUtil {
         //setting the margin size for the graph in the order top, left, bottom, right
         multiRenderer.setMargins(new int[]{30, 30, 30, 30});
 
-      // for (int i = 0; i < tDistance.size(); i++) {
-      //      multiRenderer.addXTextLabel(tDistance.get(i).getTime(), tDistance.get(i).getTime().toString());
-      //  }
+        // for (int i = 0; i < tDistance.size(); i++) {
+        //      multiRenderer.addXTextLabel(tDistance.get(i).getTime(), tDistance.get(i).getTime().toString());
+        //  }
 
-        for (Integer i = 0; i <= (maxTime/60 + 1) * 60; i++) {
-            multiRenderer.addXTextLabel(i,i.toString());
-            i = i + 4 * (int)(maxTime/60 + 1);
+        for (Integer i = 0; i <= (maxTime / 60 + 1) * 60; i++) {
+            multiRenderer.addXTextLabel(i, i.toString());
+            i = i + 4 * (int) (maxTime / 60 + 1);
         }
 
         // Adding incomeRenderer and baseRenderer to multipleRenderer
