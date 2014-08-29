@@ -169,6 +169,10 @@ public class MainActivity extends FragmentActivity implements
 
         setUpMapIfNeeded();
 
+        tDistance = new ArrayList<TimedDistance>();
+        tLocation = new ArrayList<TimedLocation>();
+        base = new ArrayList<TimedDistance>();
+
         // Draw a dummy blank diagram.
         tDistance.add(new TimedDistance(0L, 0.0));
         base = tDistance;
@@ -501,7 +505,7 @@ public class MainActivity extends FragmentActivity implements
         mLatLng.setText(kuzki.net.exercisetracker.LocationUtils.getLatLng(this, location));
 
         if (mStartRecording && mRecordRoute != null) {
-            mRecordRoute.addPoint(location.getLatitude(), location.getLongitude());
+            mRecordRoute.addPoint(location.getLatitude(), location.getLongitude(), location.getTime());
             MapUtil.drawRoute(mMap, mRecordRoute, mBaseRoute);
             MapUtil.moveToMyLocation(mMap, location);
 
@@ -524,8 +528,10 @@ public class MainActivity extends FragmentActivity implements
         Random r = new Random();
         double side1 = 2.5 * r.nextDouble() - 1 > 0 ? -1 : 1;
         double side2 = 2.5 * r.nextDouble() - 1 > 0 ? -1 : 1;
-        location.setLatitude(mPrevLatLng.latitude + .00005d * side1);
-        location.setLongitude(mPrevLatLng.longitude + .00005d * side2);
+        double dist1 = (double)((int)(r.nextDouble() * 100)) * .0000001;
+        double dist2 = (double)((int)(r.nextDouble() * 100)) * .0000001;
+        location.setLatitude(mPrevLatLng.latitude + dist1 * side1);
+        location.setLongitude(mPrevLatLng.longitude + dist2 * side2);
         mPrevLatLng = new LatLng(location.getLatitude(), location.getLongitude());
     }
 
@@ -592,11 +598,6 @@ public class MainActivity extends FragmentActivity implements
             mRecordRoute = new Route();
             mStartStopRecording.setText(R.string.stop);
             mStartStopRecording.setBackgroundColor(Color.RED);
-            tDistance = new ArrayList<TimedDistance>();
-            tLocation = new ArrayList<TimedLocation>();
-            base = new ArrayList<TimedDistance>();
-
-
         }
     }
 
