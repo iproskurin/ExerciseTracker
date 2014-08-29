@@ -52,6 +52,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
@@ -165,7 +166,6 @@ public class MainActivity extends FragmentActivity implements
 
         mDbHelper = new RouteDatabaseHelper(this);
 
-        parseIntent();
 
         setUpMapIfNeeded();
 
@@ -179,6 +179,7 @@ public class MainActivity extends FragmentActivity implements
         DrawUtil.drawChart(tDistance, base, (LinearLayout) findViewById(R.id.diagram_layout),
                 MainActivity.this);
 
+        parseIntent();
     }
 
     private void parseIntent() {
@@ -190,8 +191,10 @@ public class MainActivity extends FragmentActivity implements
             if (route != null) {
                 Log.d(TAG, "Setting & drawing base route " + route.name);
                 mBaseRoute = route;
-                MapUtil.drawRoute(mMap, mBaseRoute);
                 MapUtil.moveCameraToRoute(mMap, mBaseRoute);
+                MapUtil.drawRoute(mMap, null, mBaseRoute);
+                DrawUtil.drawChart(mBaseRoute, mBaseRoute, (LinearLayout) findViewById(R.id.diagram_layout),
+                        MainActivity.this);
             }
         }
     }
@@ -255,7 +258,6 @@ public class MainActivity extends FragmentActivity implements
          * instead, wait for onResume()
          */
         mLocationClient.connect();
-
     }
     /*
      * Called when the system detects that this Activity is now visible.
@@ -435,9 +437,48 @@ public class MainActivity extends FragmentActivity implements
     public void onConnected(Bundle bundle) {
         mConnectionStatus.setText(R.string.connected);
 
+        mLocationClient.setMockMode(FAKE_LOC);
+        if (FAKE_LOC) {
+            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(LatLng position) {
+                    Log.d(TAG, "Setting mock location to: " + position);
+                    Location newLoc = createLocation(position);
+                    mLocationClient.setMockLocation(newLoc);
+                    onLocationChanged(newLoc);
+                }
+            });
+            Location defaultLoc = createDefaultLocation();
+            MapUtil.moveCameraToLocation(mMap, defaultLoc.getLatitude(), defaultLoc.getLongitude());
+        }
+
+        Location currentLocation = mLocationClient.getLastLocation();
+        if(currentLocation != null) {
+            MapUtil.moveCameraToLocation(mMap, currentLocation.getLatitude(), currentLocation.getLongitude());
+        }
         if (mUpdatesRequested) {
             startPeriodicUpdates();
         }
+    }
+
+    private static final String PROVIDER = "flp";
+    private static final double LAT = 37.377166;
+    private static final double LNG = -122.086966;
+    private static final float ACCURACY = 3.0f;
+
+    private Location createDefaultLocation() {
+        return createLocation(new LatLng(LAT, LNG));
+    }
+
+    private Location createLocation(LatLng pos) {
+        Location newLocation = new Location(PROVIDER);
+        newLocation.setLatitude(pos.latitude);
+        newLocation.setLongitude(pos.longitude);
+        newLocation.setAccuracy(ACCURACY);
+        Calendar c = Calendar.getInstance();
+        int seconds = c.get(Calendar.SECOND);
+        newLocation.setTime(seconds * 1000);
+        return newLocation;
     }
 
     /*
@@ -495,12 +536,12 @@ public class MainActivity extends FragmentActivity implements
      */
     @Override
     public void onLocationChanged(Location location) {
-
+        Log.d(TAG, "onLocationChanged: " + location.getLongitude() + location.getLatitude());
         // Report to the UI that the location was updated
         mConnectionStatus.setText(R.string.location_updated);
 
         if (FAKE_LOC) {
-            updateFakeLocation(location);
+            // updateFakeLocation(location);
         }
 
         // In the UI, set the latitude and longitude to the value received
@@ -508,17 +549,19 @@ public class MainActivity extends FragmentActivity implements
 
         if (mStartRecording && mRecordRoute != null) {
             mRecordRoute.addPoint(location.getLatitude(), location.getLongitude(), location.getTime());
-            MapUtil.drawRoute(mMap, mRecordRoute, mBaseRoute);
-            MapUtil.moveCameraToLocation(mMap, location);
 
-            tLocation.add(new TimedLocation(
-                    location.getTime()/1000,
-                    location.getLatitude(),
-                    location.getLongitude()));
-            tDistance = TimedLocation.convertToTimedDistance(tLocation);
-            base = tDistance;
+            updateFragmentsWithRoute(mRecordRoute);
+        }
+    }
 
-            DrawUtil.drawChart(tDistance, base, (LinearLayout) findViewById(R.id.diagram_layout),
+    private void updateFragmentsWithRoute(Route route) {
+        MapUtil.drawRoute(mMap, mRecordRoute, mBaseRoute);
+        MapUtil.moveCameraToRoute(mMap, route);
+        if (mBaseRoute != null) {
+            DrawUtil.drawChart(mRecordRoute, mBaseRoute, (LinearLayout) findViewById(R.id.diagram_layout),
+                    MainActivity.this);
+        } else {
+            DrawUtil.drawChart(mRecordRoute, mRecordRoute, (LinearLayout) findViewById(R.id.diagram_layout),
                     MainActivity.this);
         }
     }
@@ -591,7 +634,9 @@ public class MainActivity extends FragmentActivity implements
             mStartRecording = false;
             mStartStopRecording.setText(R.string.start);
             mStartStopRecording.setBackgroundColor(Color.GREEN);
-            this.getRouteName();
+            if (mBaseRoute == null) {
+                this.getRouteName();
+            }
 //            mRecordRoute.name = "testRouteName";
         } else {
             // Start clicked.

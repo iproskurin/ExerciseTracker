@@ -42,8 +42,8 @@ public class RouteDatabaseHelper extends SQLiteOpenHelper {
                         RouteEntry._ID + " INTEGER PRIMARY KEY," +
                         RouteEntry.COLUMN_NAME_ROUTE_NAME + TEXT_TYPE + COMMA_SEP +
                         RouteEntry.COLUMN_NAME_LAT + TEXT_TYPE + COMMA_SEP +
-                        RouteEntry.COLUMN_NAME_LNG + TEXT_TYPE +
-                        RouteEntry.COLUMN_NAME_TIME + TEXT_TYPE + COMMA_SEP +
+                        RouteEntry.COLUMN_NAME_LNG + TEXT_TYPE + COMMA_SEP +
+                        RouteEntry.COLUMN_NAME_TIME + TEXT_TYPE +
                         " )";
 
         public static final String SQL_DELETE_ENTRIES =
@@ -100,6 +100,7 @@ public class RouteDatabaseHelper extends SQLiteOpenHelper {
         List<Route> routeList = getRoutes();
         for (Route r : routeList) {
             if (r.name.equals(routeName)) {
+                Log.d(TAG, "Found route: " + r.toDebugString());
                 return r;
             }
         }
@@ -122,22 +123,13 @@ public class RouteDatabaseHelper extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                Log.d(TAG, "Parsed cursor with lat: ");
                 String routeName = cursor.getString(1);
-                Log.d(TAG, "name: " + routeName);
                 Double lat = Double.parseDouble(cursor.getString(2));
-                Log.d(TAG, "lat: " + lat);
                 Double lng = Double.parseDouble(cursor.getString(3));
-                Log.d(TAG, "lng: " + lng);
-                Long time = 0L;//Long.parseLong(cursor.getString(4));
-                Log.d(TAG, "time: " + time);
-
-                Log.d(TAG, "Current route list size: " + routeList.size());
+                Long time = Long.parseLong(cursor.getString(4));
                 if (routeList.isEmpty() || !routeList.get(routeList.size()-1).name.equals(routeName)) {
-                    Log.d(TAG, "Creating new route with name: " + routeName);
                     routeList.add(new Route(routeName));
                 } else {
-                    Log.d(TAG, "Adding point to the last route with name: " + routeName);
                     Route lastRoute = routeList.get(routeList.size()-1);
                     lastRoute.addPoint(lat, lng, time);
                 }
@@ -145,6 +137,9 @@ public class RouteDatabaseHelper extends SQLiteOpenHelper {
         }
 
         Log.d(TAG, "Route list is retrieved from the db: " + routeList.size());
+        for (Route r : routeList) {
+            Log.d(TAG, r.toDebugString());
+        }
         // return contact list
         return routeList;
     }

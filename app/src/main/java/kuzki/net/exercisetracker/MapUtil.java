@@ -1,5 +1,6 @@
 package kuzki.net.exercisetracker;
 
+import android.graphics.Color;
 import android.location.Location;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -13,7 +14,7 @@ import java.util.List;
 public class MapUtil {
 
     private static final String TAG = MapUtil.class.getCanonicalName();
-    private static final int DEFAULT_ZOOM = 19;
+    private static final int DEFAULT_ZOOM = 16;
 
     public static void setupMapFragment(GoogleMap map) {
         if (map != null) {
@@ -27,29 +28,24 @@ public class MapUtil {
         }
     }
 
-    public static void drawRoute(GoogleMap map, Route route,  Route baseRoute) {
+    public static void drawRoute(GoogleMap map, Route route, Route baseRoute) {
         if (map == null) {
             return;
         }
         map.clear();
         if (route != null) {
-            drawPolyline(map, route);
+            drawPolyline(map, route, false);
         }
         if (baseRoute != null) {
-            drawPolyline(map, baseRoute);
+            drawPolyline(map, baseRoute, true);
         }
     }
 
-    public static void drawRoute(GoogleMap map, Route route) {
-        if (map == null) {
-            return;
-        }
-        map.clear();
-        drawPolyline(map, route);
-    }
-
-    private static void drawPolyline(GoogleMap map, Route route) {
+    private static void drawPolyline(GoogleMap map, Route route, boolean isBase) {
         PolylineOptions polyLine = new PolylineOptions().geodesic(true);
+        if (isBase) {
+            polyLine.width(15).color(Color.BLUE);
+        }
         for (Route.RoutePoint point : route.getPoints()) {
             polyLine.add(new LatLng(point.lat, point.lng));
         }

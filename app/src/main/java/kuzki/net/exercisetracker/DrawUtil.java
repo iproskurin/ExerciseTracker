@@ -34,7 +34,7 @@ public class DrawUtil {
             return;
         }
         for (Route.RoutePoint point : route_points) {
-            tLocation.add(new TimedLocation(point.time / 1000, point.lat, point.lng));
+            tLocation.add(new TimedLocation(point.time , point.lat, point.lng));
         }
 
         List<Route.RoutePoint> base_points = base_route.getPoints();
@@ -100,7 +100,7 @@ public class DrawUtil {
         XYSeriesRenderer incomeRenderer = new XYSeriesRenderer();
         incomeRenderer.setColor(Color.CYAN); //color of the graph set to cyan
         incomeRenderer.setFillPoints(true);
-        incomeRenderer.setLineWidth(6f);
+        incomeRenderer.setLineWidth(3f);
         //incomeRenderer.setDisplayChartValues(true);
         //setting chart value distance
         //incomeRenderer.setDisplayChartValuesDistance(10);
@@ -113,7 +113,7 @@ public class DrawUtil {
         XYSeriesRenderer baseRenderer = new XYSeriesRenderer();
         baseRenderer.setColor(Color.GREEN);
         baseRenderer.setFillPoints(true);
-        baseRenderer.setLineWidth(6f);
+        baseRenderer.setLineWidth(3f);
         //baseRenderer.setDisplayChartValues(true);
         //setting line graph point style to circle
         baseRenderer.setPointStyle(PointStyle.SQUARE);

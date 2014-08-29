@@ -50,4 +50,12 @@ public class Route {
     public String toString() {
         return name;
     }
+
+    public String toDebugString() {
+        String out = name + ":\n";
+        for (RoutePoint p : points) {
+            out += "(" + p.lat + ", " + p.lng + ", " + p.time + ")\n";
+        }
+        return out;
+    }
 }
