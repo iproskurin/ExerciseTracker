@@ -34,6 +34,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +48,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -99,6 +102,10 @@ public class MainActivity extends FragmentActivity implements
     private Route mRecordRoute = null;
     private LatLng mPrevLatLng;
     private RouteDatabaseHelper mDbHelper;
+
+    private List<TimedDistance>  tDistance = null;
+    private List<TimedLocation>  tLocation = null;
+    private List<TimedDistance> base = null;
 
     /*
      * Initialize the Activity
@@ -467,6 +474,17 @@ public class MainActivity extends FragmentActivity implements
             mRecordRoute.addPoint(location.getLatitude(), location.getLongitude());
             MapUtil.drawRoute(mMap, mRecordRoute);
             MapUtil.moveToMyLocation(mMap, location);
+
+            tLocation.add(new TimedLocation(
+                    location.getTime(),
+                    location.getLatitude(),
+                    location.getLongitude()));
+            tDistance = TimedLocation.convertToTimedDistance(tLocation);
+            base = tDistance;
+
+            DrawUtil.drawChart(tDistance, base, (LinearLayout) findViewById(R.id.diagram_layout),
+                    MainActivity.this);
+
         }
 
     }
@@ -546,6 +564,11 @@ public class MainActivity extends FragmentActivity implements
             mRecordRoute = new Route();
             mStartStopRecording.setText(R.string.stop);
             mStartStopRecording.setBackgroundColor(Color.RED);
+            tDistance = new ArrayList<TimedDistance>();
+            tLocation = new ArrayList<TimedLocation>();
+            base = new ArrayList<TimedDistance>();
+
+
         }
     }
 
