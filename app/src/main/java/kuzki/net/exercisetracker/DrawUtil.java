@@ -141,7 +141,9 @@ public class DrawUtil {
         //setting used to move the graph on xaxiz to .5 to the right
         multiRenderer.setXAxisMin(0);
         //setting used to move the graph on xaxiz to .5 to the right
-        multiRenderer.setXAxisMax(maxTime);
+
+        multiRenderer.setXAxisMax((maxTime/60 + 1) * 60);
+
         //setting bar size or space between two bars
         //multiRenderer.setBarSpacing(0.5);
         //Setting background color of the graph to transparent
