@@ -75,6 +75,7 @@ public class MainActivity extends FragmentActivity implements
 
     private static final boolean DEBUG = true;
     private static final boolean FAKE_LOC = true;
+    private static final String TAG = MainActivity.class.getCanonicalName();
     // A request to connect to Location Services
     private LocationRequest mLocationRequest;
 
@@ -102,13 +103,17 @@ public class MainActivity extends FragmentActivity implements
 
     GoogleMap mMap;
     private boolean mStartRecording = false;
-    private Route mRecordRoute = null;
     private LatLng mPrevLatLng;
     private RouteDatabaseHelper mDbHelper;
 
     private List<TimedDistance>  tDistance = null;
     private List<TimedLocation>  tLocation = null;
     private List<TimedDistance> base = null;
+
+    private Route mRecordRoute = null;
+    private Route mBaseRoute = null;
+
+    public final static String EXTRA_ROUTE_NAME = "net.kuzki.excercisetracker.ROUTE_NAME";
 
     /*
      * Initialize the Activity
@@ -160,7 +165,13 @@ public class MainActivity extends FragmentActivity implements
 
         mDbHelper = new RouteDatabaseHelper(this);
 
+        parseIntent();
+
         setUpMapIfNeeded();
+
+        tDistance = new ArrayList<TimedDistance>();
+        tLocation = new ArrayList<TimedLocation>();
+        base = new ArrayList<TimedDistance>();
 
         // Draw a dummy blank diagram.
         tDistance.add(new TimedDistance(0L, 0.0));
@@ -168,6 +179,19 @@ public class MainActivity extends FragmentActivity implements
         DrawUtil.drawChart(tDistance, base, (LinearLayout) findViewById(R.id.diagram_layout),
                 MainActivity.this);
 
+    }
+
+    private void parseIntent() {
+        Intent intent = getIntent();
+        if (intent.hasExtra(EXTRA_ROUTE_NAME)) {
+            String routeName = intent.getStringExtra(EXTRA_ROUTE_NAME);
+            Log.d(TAG, "Opened with existing route intent: " + routeName);
+            Route route = mDbHelper.getRoute(routeName);
+            if (route != null) {
+                mBaseRoute = route;
+                MapUtil.drawRoute(mMap, mBaseRoute);
+            }
+        }
     }
 
     private void setUpMapIfNeeded() {
@@ -481,8 +505,8 @@ public class MainActivity extends FragmentActivity implements
         mLatLng.setText(kuzki.net.exercisetracker.LocationUtils.getLatLng(this, location));
 
         if (mStartRecording && mRecordRoute != null) {
-            mRecordRoute.addPoint(location.getLatitude(), location.getLongitude());
-            MapUtil.drawRoute(mMap, mRecordRoute);
+            mRecordRoute.addPoint(location.getLatitude(), location.getLongitude(), location.getTime());
+            MapUtil.drawRoute(mMap, mRecordRoute, mBaseRoute);
             MapUtil.moveToMyLocation(mMap, location);
 
             tLocation.add(new TimedLocation(
@@ -494,9 +518,7 @@ public class MainActivity extends FragmentActivity implements
 
             DrawUtil.drawChart(tDistance, base, (LinearLayout) findViewById(R.id.diagram_layout),
                     MainActivity.this);
-
         }
-
     }
 
     private void updateFakeLocation(Location location) {
@@ -506,8 +528,10 @@ public class MainActivity extends FragmentActivity implements
         Random r = new Random();
         double side1 = 2.5 * r.nextDouble() - 1 > 0 ? -1 : 1;
         double side2 = 2.5 * r.nextDouble() - 1 > 0 ? -1 : 1;
-        location.setLatitude(mPrevLatLng.latitude + .00005d * side1);
-        location.setLongitude(mPrevLatLng.longitude + .00005d * side2);
+        double dist1 = (double)((int)(r.nextDouble() * 100)) * .0000001;
+        double dist2 = (double)((int)(r.nextDouble() * 100)) * .0000001;
+        location.setLatitude(mPrevLatLng.latitude + dist1 * side1);
+        location.setLongitude(mPrevLatLng.longitude + dist2 * side2);
         mPrevLatLng = new LatLng(location.getLatitude(), location.getLongitude());
     }
 
@@ -574,11 +598,6 @@ public class MainActivity extends FragmentActivity implements
             mRecordRoute = new Route();
             mStartStopRecording.setText(R.string.stop);
             mStartStopRecording.setBackgroundColor(Color.RED);
-            tDistance = new ArrayList<TimedDistance>();
-            tLocation = new ArrayList<TimedLocation>();
-            base = new ArrayList<TimedDistance>();
-
-
         }
     }
 
@@ -613,8 +632,14 @@ public class MainActivity extends FragmentActivity implements
         alert.show();
     }
 
-    public static Intent createIntent(Context context) {
+    public static Intent createNewRouteIntent(Context context) {
         Intent intent = new Intent(context, MainActivity.class);
+        return intent;
+    }
+
+    public static Intent createExistingRouteIntent(Context context, String routeName) {
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.putExtra(EXTRA_ROUTE_NAME, routeName);
         return intent;
     }
 

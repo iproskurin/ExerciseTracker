@@ -13,9 +13,9 @@ public class Route {
     List<RoutePoint> points;
 
     public class RoutePoint {
-        double lat;
-        double lng;
-        long time;
+        Double lat;
+        Double lng;
+        Long time;
 
         public RoutePoint(double lat, double lng, long time) {
             this.lat = lat;
@@ -35,10 +35,6 @@ public class Route {
 
     public void addPoint(LatLng latLng) {
         addPoint(latLng.latitude, latLng.longitude, 0);
-    }
-
-    public void addPoint(double lat, double lng) {
-        addPoint(lat, lng, 0);
     }
 
     public void addPoint(double lat, double lng, long time) {
