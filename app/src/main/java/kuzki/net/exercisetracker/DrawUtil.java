@@ -164,7 +164,7 @@ public class DrawUtil {
 
         for (Integer i = 0; i <= (maxTime/60 + 1) * 60; i++) {
             multiRenderer.addXTextLabel(i,i.toString());
-            i = i + 4;
+            i = i + 4 * (int)(maxTime/60 + 1);
         }
 
         // Adding incomeRenderer and baseRenderer to multipleRenderer
