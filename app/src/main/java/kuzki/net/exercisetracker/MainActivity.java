@@ -74,7 +74,7 @@ public class MainActivity extends FragmentActivity implements
         GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private static final boolean FAKE_LOC = true;
     private static final String TAG = MainActivity.class.getCanonicalName();
     // A request to connect to Location Services
@@ -103,7 +103,6 @@ public class MainActivity extends FragmentActivity implements
     boolean mUpdatesRequested = false;
 
     GoogleMap mMap;
-    private boolean mStartRecording = false;
     private LatLng mPrevLatLng;
     private RouteDatabaseHelper mDbHelper;
 
@@ -115,6 +114,9 @@ public class MainActivity extends FragmentActivity implements
     private Route mBaseRoute = null;
 
     public final static String EXTRA_ROUTE_NAME = "net.kuzki.excercisetracker.ROUTE_NAME";
+
+    private boolean mStartPressed = false;
+    private boolean mIsRecordingMode = false;
 
     /*
      * Initialize the Activity
@@ -196,6 +198,8 @@ public class MainActivity extends FragmentActivity implements
                 DrawUtil.drawChart(mBaseRoute, mBaseRoute, (LinearLayout) findViewById(R.id.diagram_layout),
                         MainActivity.this);
             }
+        } else {
+            mIsRecordingMode = true;
         }
     }
 
@@ -547,21 +551,20 @@ public class MainActivity extends FragmentActivity implements
         // In the UI, set the latitude and longitude to the value received
         mLatLng.setText(kuzki.net.exercisetracker.LocationUtils.getLatLng(this, location));
 
-        if (mStartRecording && mRecordRoute != null) {
+        if (mRecordRoute != null) {
             mRecordRoute.addPoint(location.getLatitude(), location.getLongitude(), location.getTime());
-
-            updateFragmentsWithRoute(mRecordRoute);
+            updateFragmentsWithRoute(mRecordRoute, mBaseRoute);
         }
     }
 
-    private void updateFragmentsWithRoute(Route route) {
-        MapUtil.drawRoute(mMap, mRecordRoute, mBaseRoute);
+    private void updateFragmentsWithRoute(Route route, Route baseRoute) {
+        MapUtil.drawRoute(mMap, route, baseRoute);
         MapUtil.moveCameraToRoute(mMap, route);
-        if (mBaseRoute != null) {
-            DrawUtil.drawChart(mRecordRoute, mBaseRoute, (LinearLayout) findViewById(R.id.diagram_layout),
+        if (route != null) {
+            DrawUtil.drawChart(route, baseRoute, (LinearLayout) findViewById(R.id.diagram_layout),
                     MainActivity.this);
         } else {
-            DrawUtil.drawChart(mRecordRoute, mRecordRoute, (LinearLayout) findViewById(R.id.diagram_layout),
+            DrawUtil.drawChart(route, route, (LinearLayout) findViewById(R.id.diagram_layout),
                     MainActivity.this);
         }
     }
@@ -628,24 +631,28 @@ public class MainActivity extends FragmentActivity implements
     }
 
     public void onStartStopRecordingClicked(View view) {
-        if (mStartRecording) {
+        if (mStartPressed) {
             // Stop clicked.
             stopUpdates();
-            mStartRecording = false;
             mStartStopRecording.setText(R.string.start);
             mStartStopRecording.setBackgroundColor(Color.GREEN);
-            if (mBaseRoute == null) {
+            if (mIsRecordingMode) {
                 this.getRouteName();
+            } else {
+                Toast.makeText(this, "Next time try harder!", Toast.LENGTH_SHORT).show();
             }
-//            mRecordRoute.name = "testRouteName";
         } else {
             // Start clicked.
             startUpdates();
-            mStartRecording = true;
-            mRecordRoute = new Route();
             mStartStopRecording.setText(R.string.stop);
             mStartStopRecording.setBackgroundColor(Color.RED);
+            if (mIsRecordingMode) {
+                mRecordRoute = new Route();
+            } else {
+                Toast.makeText(this, "Go! You can do it!", Toast.LENGTH_SHORT).show();
+            }
         }
+        mStartPressed = !mStartPressed;
     }
 
     private void addRecordedRouteToDb() {

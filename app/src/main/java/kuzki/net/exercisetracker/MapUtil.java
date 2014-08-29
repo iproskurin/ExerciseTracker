@@ -14,7 +14,7 @@ import java.util.List;
 public class MapUtil {
 
     private static final String TAG = MapUtil.class.getCanonicalName();
-    private static final int DEFAULT_ZOOM = 16;
+    private static final int DEFAULT_ZOOM = 15;
 
     public static void setupMapFragment(GoogleMap map) {
         if (map != null) {
@@ -44,7 +44,9 @@ public class MapUtil {
     private static void drawPolyline(GoogleMap map, Route route, boolean isBase) {
         PolylineOptions polyLine = new PolylineOptions().geodesic(true);
         if (isBase) {
-            polyLine.width(15).color(Color.BLUE);
+            polyLine.width(10).color(Color.BLUE);
+        } else {
+            polyLine.width(5).color(Color.BLUE);
         }
         for (Route.RoutePoint point : route.getPoints()) {
             polyLine.add(new LatLng(point.lat, point.lng));
