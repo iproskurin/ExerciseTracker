@@ -137,7 +137,7 @@ public class DrawUtil {
         //setting no of values to display in y axis
         multiRenderer.setYLabels(10);
 
-        multiRenderer.setYAxisMax(maxDistance);
+        multiRenderer.setYAxisMax( ((int)(maxDistance/0.1) + 1) * 0.1);
         //setting used to move the graph on xaxiz to .5 to the right
         multiRenderer.setXAxisMin(0);
         //setting used to move the graph on xaxiz to .5 to the right
