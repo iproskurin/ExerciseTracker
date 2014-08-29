@@ -72,13 +72,22 @@ public class TimedLocation {
             return null;
         }
 
-        TimedLocation start = tLocations.get(0);
+        if (tLocations.size() == 1) {
+            ArrayList<TimedDistance> result =  new ArrayList<TimedDistance>();
+            result.add(new TimedDistance(0L, 0.0));
+            return result;
+        }
 
+        TimedLocation start = tLocations.get(0);
         ArrayList<TimedDistance> result =  new ArrayList<TimedDistance>();
 
-        for (int i = 0; i < tLocations.size(); i++) {
+        double accumulatedDistance = 0;
+        for (int i = 1; i < tLocations.size(); i++) {
             TimedLocation current = tLocations.get(i);
-            result.add(new TimedDistance(current.getTime()- start.getTime(), distanceBetween(current, start)));
+            TimedLocation previous = tLocations.get(i - 1);
+            accumulatedDistance += distanceBetween(current, previous);
+
+            result.add(new TimedDistance(current.getTime()- start.getTime(), accumulatedDistance));
         }
         return result;
     }
