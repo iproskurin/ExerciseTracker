@@ -7,6 +7,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.List;
+
 
 public class MapUtil {
 
@@ -44,7 +46,6 @@ public class MapUtil {
         }
         map.clear();
         drawPolyline(map, route);
-
     }
 
     private static void drawPolyline(GoogleMap map, Route route) {
@@ -55,10 +56,21 @@ public class MapUtil {
         map.addPolyline(polyLine);
     }
 
-    public static void moveToMyLocation(GoogleMap map, Location newLoc) {
+    public static void moveCameraToLocation(GoogleMap map, Double lat, Double lng) {
         if (map != null) {
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                    new LatLng(newLoc.getLatitude(), newLoc.getLongitude()), DEFAULT_ZOOM));
+                    new LatLng(lat, lng), DEFAULT_ZOOM));
         }
+
+    }
+
+    public static void moveCameraToLocation(GoogleMap map, Location newLoc) {
+        moveCameraToLocation(map, newLoc.getLatitude(), newLoc.getLongitude());
+    }
+
+    public static void moveCameraToRoute(GoogleMap map, Route route) {
+        List<Route.RoutePoint> points = route.getPoints();
+        Route.RoutePoint lastPoint = points.get(points.size() - 1);
+        moveCameraToLocation(map, lastPoint.lat, lastPoint.lng);
     }
 }

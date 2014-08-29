@@ -188,8 +188,10 @@ public class MainActivity extends FragmentActivity implements
             Log.d(TAG, "Opened with existing route intent: " + routeName);
             Route route = mDbHelper.getRoute(routeName);
             if (route != null) {
+                Log.d(TAG, "Setting & drawing base route " + route.name);
                 mBaseRoute = route;
                 MapUtil.drawRoute(mMap, mBaseRoute);
+                MapUtil.moveCameraToRoute(mMap, mBaseRoute);
             }
         }
     }
@@ -507,7 +509,7 @@ public class MainActivity extends FragmentActivity implements
         if (mStartRecording && mRecordRoute != null) {
             mRecordRoute.addPoint(location.getLatitude(), location.getLongitude(), location.getTime());
             MapUtil.drawRoute(mMap, mRecordRoute, mBaseRoute);
-            MapUtil.moveToMyLocation(mMap, location);
+            MapUtil.moveCameraToLocation(mMap, location);
 
             tLocation.add(new TimedLocation(
                     location.getTime()/1000,
@@ -528,8 +530,8 @@ public class MainActivity extends FragmentActivity implements
         Random r = new Random();
         double side1 = 2.5 * r.nextDouble() - 1 > 0 ? -1 : 1;
         double side2 = 2.5 * r.nextDouble() - 1 > 0 ? -1 : 1;
-        double dist1 = (double)((int)(r.nextDouble() * 100)) * .0000001;
-        double dist2 = (double)((int)(r.nextDouble() * 100)) * .0000001;
+        double dist1 = (double)((int)(r.nextDouble() * 100000)) * .000000001;
+        double dist2 = (double)((int)(r.nextDouble() * 100000)) * .000000001;
         location.setLatitude(mPrevLatLng.latitude + dist1 * side1);
         location.setLongitude(mPrevLatLng.longitude + dist2 * side2);
         mPrevLatLng = new LatLng(location.getLatitude(), location.getLongitude());
