@@ -1,0 +1,50 @@
+<LinearLayout
+    android:id="@+id/main_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MapsActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:id="@+id/map_stats"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/map_height"
+            android:id="@+id/map"
+            tools:context=".MapsActivity"
+            android:name="com.google.android.gms.maps.SupportMapFragment"/>
+        <Button
+            android:id="@+id/start_stop_button"
+            android:layout_width="@dimen/button_width"
+            android:layout_height="@dimen/button_height"
+            android:text="@string/start"
+            android:onClick="onStartStopRecordingClicked"/>
+        <TextView
+            android:id="@+id/lat_lng"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/latlng"
+            android:textSize="20sp"
+            android:layout_below="@+id/start_stop_button"/>
+        <TextView
+            android:id="@+id/text_connection_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/lat_lng"
+            android:text="@string/unknown"
+            android:textIsSelectable="true" />
+        <TextView
+            android:id="@+id/text_connection_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/text_connection_status"
+            android:text="@string/unknown"
+            android:textIsSelectable="true"/>
+    </RelativeLayout>
+</LinearLayout>
