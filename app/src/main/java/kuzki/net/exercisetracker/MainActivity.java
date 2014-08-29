@@ -168,6 +168,13 @@ public class MainActivity extends FragmentActivity implements
         parseIntent();
 
         setUpMapIfNeeded();
+
+        // Draw a dummy blank diagram.
+        tDistance.add(new TimedDistance(0L, 0.0));
+        base = tDistance;
+        DrawUtil.drawChart(tDistance, base, (LinearLayout) findViewById(R.id.diagram_layout),
+                MainActivity.this);
+
     }
 
     private void parseIntent() {

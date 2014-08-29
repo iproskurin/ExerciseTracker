@@ -66,10 +66,10 @@ public class DrawUtil {
         XYSeriesRenderer incomeRenderer = new XYSeriesRenderer();
         incomeRenderer.setColor(Color.CYAN); //color of the graph set to cyan
         incomeRenderer.setFillPoints(true);
-        incomeRenderer.setLineWidth(2f);
-        incomeRenderer.setDisplayChartValues(true);
+        incomeRenderer.setLineWidth(6f);
+        //incomeRenderer.setDisplayChartValues(true);
         //setting chart value distance
-        incomeRenderer.setDisplayChartValuesDistance(10);
+        //incomeRenderer.setDisplayChartValuesDistance(10);
         //setting line graph point style to circle
         incomeRenderer.setPointStyle(PointStyle.CIRCLE);
         //setting stroke of the line chart to solid
@@ -79,8 +79,8 @@ public class DrawUtil {
         XYSeriesRenderer baseRenderer = new XYSeriesRenderer();
         baseRenderer.setColor(Color.GREEN);
         baseRenderer.setFillPoints(true);
-        baseRenderer.setLineWidth(4f);
-        baseRenderer.setDisplayChartValues(true);
+        baseRenderer.setLineWidth(6f);
+        //baseRenderer.setDisplayChartValues(true);
         //setting line graph point style to circle
         baseRenderer.setPointStyle(PointStyle.SQUARE);
         //setting stroke of the line chart to solid
