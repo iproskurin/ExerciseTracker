@@ -19,8 +19,10 @@ package kuzki.net.exercisetracker;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
@@ -34,6 +36,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -562,8 +565,8 @@ public class MainActivity extends FragmentActivity implements
             mStartRecording = false;
             mStartStopRecording.setText(R.string.start);
             mStartStopRecording.setBackgroundColor(Color.GREEN);
-            mRecordRoute.name = "testRouteName";
-            mDbHelper.addRoute(mRecordRoute);
+            this.getRouteName();
+//            mRecordRoute.name = "testRouteName";
         } else {
             // Start clicked.
             startUpdates();
@@ -577,6 +580,37 @@ public class MainActivity extends FragmentActivity implements
 
 
         }
+    }
+
+    private void addRecordedRouteToDb() {
+        mDbHelper.addRoute(mRecordRoute);
+    }
+
+    private void getRouteName() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle(R.string.name_your_route_prompt);
+
+        // Set an EditText view to get user input
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                mRecordRoute.name = input.getText().toString();
+                addRecordedRouteToDb();
+                finish();
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                mRecordRoute = null;
+                mMap.clear();
+            }
+        });
+
+        alert.show();
     }
 
     public static Intent createIntent(Context context) {

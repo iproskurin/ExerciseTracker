@@ -60,5 +60,6 @@
     <string name="title_activity_route_list">RouteListActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="create_new_route">Create new route...</string>
+    <string name="name_your_route_prompt">Name your route</string>
 
 </resources>
