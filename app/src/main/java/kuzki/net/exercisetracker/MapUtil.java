@@ -31,8 +31,8 @@ public class MapUtil {
         }
         map.clear();
         PolylineOptions polyLine = new PolylineOptions().geodesic(true);
-        for (LatLng point : route.getPoints()) {
-            polyLine.add(point);
+        for (Route.RoutePoint point : route.getPoints()) {
+            polyLine.add(new LatLng(point.lat, point.lng));
         }
         map.addPolyline(polyLine);
     }

@@ -13,11 +13,15 @@ public class RouteListActivity extends Activity {
 
     private static final String TAG = RouteListActivity.class.getCanonicalName();
     private ListView mRouteList;
+    private RouteDatabaseHelper mDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route_list);
+        mDbHelper = new RouteDatabaseHelper(this);
+
+        // List<Route> routes = mDbHelper.getRoutes();
 
 //        mRouteList = (ListView) findViewById(R.id.route_list);
 //        mRouteList.setAdapter(new RouteListAdapter(this));

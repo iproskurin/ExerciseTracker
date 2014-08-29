@@ -98,6 +98,7 @@ public class MainActivity extends FragmentActivity implements
     private boolean mStartRecording = false;
     private Route mRecordRoute = null;
     private LatLng mPrevLatLng;
+    private RouteDatabaseHelper mDbHelper;
 
     /*
      * Initialize the Activity
@@ -146,6 +147,8 @@ public class MainActivity extends FragmentActivity implements
          * handle callbacks.
          */
         mLocationClient = new LocationClient(this, this, this);
+
+        mDbHelper = new RouteDatabaseHelper(this);
 
         setUpMapIfNeeded();
     }
@@ -534,6 +537,8 @@ public class MainActivity extends FragmentActivity implements
             mStartRecording = false;
             mStartStopRecording.setText(R.string.start);
             mStartStopRecording.setBackgroundColor(Color.GREEN);
+            mRecordRoute.name = "testRouteName";
+            mDbHelper.addRoute(mRecordRoute);
         } else {
             // Start clicked.
             startUpdates();
