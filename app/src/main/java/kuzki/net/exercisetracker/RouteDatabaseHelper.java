@@ -16,6 +16,7 @@ public class RouteDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = RouteDatabaseHelper.class.getCanonicalName();
 
+
     public final class RoutesContract {
         // To prevent someone from accidentally instantiating the contract class,
         // give it an empty constructor.
@@ -40,9 +41,9 @@ public class RouteDatabaseHelper extends SQLiteOpenHelper {
                 "CREATE TABLE " + RouteEntry.TABLE_NAME + " (" +
                         RouteEntry._ID + " INTEGER PRIMARY KEY," +
                         RouteEntry.COLUMN_NAME_ROUTE_NAME + TEXT_TYPE + COMMA_SEP +
-                        RouteEntry.COLUMN_NAME_TIME + INT_TYPE+ COMMA_SEP +
-                        RouteEntry.COLUMN_NAME_LAT + FLOAT_TYPE + COMMA_SEP +
-                        RouteEntry.COLUMN_NAME_LNG + FLOAT_TYPE +
+                        RouteEntry.COLUMN_NAME_LAT + TEXT_TYPE + COMMA_SEP +
+                        RouteEntry.COLUMN_NAME_LNG + TEXT_TYPE +
+                        RouteEntry.COLUMN_NAME_TIME + TEXT_TYPE + COMMA_SEP +
                         " )";
 
         public static final String SQL_DELETE_ENTRIES =
@@ -84,6 +85,7 @@ public class RouteDatabaseHelper extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             values.put(RoutesContract.RouteEntry.COLUMN_NAME_ROUTE_NAME, route.name);
             values.put(RoutesContract.RouteEntry.COLUMN_NAME_LAT, point.lat);
+            Log.d(TAG, "Storing lat: " + point.lat + " in db: " + values.get(RoutesContract.RouteEntry.COLUMN_NAME_LAT));
             values.put(RoutesContract.RouteEntry.COLUMN_NAME_LNG, point.lng);
             values.put(RoutesContract.RouteEntry.COLUMN_NAME_TIME, point.time);
 
@@ -101,6 +103,7 @@ public class RouteDatabaseHelper extends SQLiteOpenHelper {
                 return r;
             }
         }
+        Log.d(TAG, "Did not find the route: " + routeName);
         return null;
     }
 
@@ -144,5 +147,11 @@ public class RouteDatabaseHelper extends SQLiteOpenHelper {
         Log.d(TAG, "Route list is retrieved from the db: " + routeList.size());
         // return contact list
         return routeList;
+    }
+
+
+    public void removeAllRoutes() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(RoutesContract.RouteEntry.TABLE_NAME, null, null);
     }
 }

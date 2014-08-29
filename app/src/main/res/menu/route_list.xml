@@ -1,8 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="kuzki.net.exercisetracker.RouteListActivity" >
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
+
+    <item android:id="@+id/action_remove_all"
+        android:title="@string/remove_all_routes"
         android:orderInCategory="100"
-        android:showAsAction="never" />
+        app:showAsAction="ifRoom"/>
+
 </menu>

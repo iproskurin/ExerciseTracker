@@ -28,7 +28,6 @@ public class RouteListActivity extends Activity {
 
         Log.d(TAG, "getting routes");
 
-
         mRouteList = (ListView) findViewById(R.id.route_list);
     }
 
@@ -59,14 +58,20 @@ public class RouteListActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.action_remove_all:
+                removeAllRoutes();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
+    }
+
+    private void removeAllRoutes() {
+        mDbHelper.removeAllRoutes();
+        final List<Route> routes = mDbHelper.getRoutes();
+        mRouteList.setAdapter(new ArrayAdapter<Route>(this, R.layout.route_list_item, routes));
     }
 
     public void onAddNewRouteClicked(View view) {
