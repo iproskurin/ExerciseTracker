@@ -476,7 +476,7 @@ public class MainActivity extends FragmentActivity implements
             MapUtil.moveToMyLocation(mMap, location);
 
             tLocation.add(new TimedLocation(
-                    location.getTime(),
+                    location.getTime()/1000,
                     location.getLatitude(),
                     location.getLongitude()));
             tDistance = TimedLocation.convertToTimedDistance(tLocation);
