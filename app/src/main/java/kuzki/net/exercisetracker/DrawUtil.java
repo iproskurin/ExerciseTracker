@@ -162,7 +162,7 @@ public class DrawUtil {
       //      multiRenderer.addXTextLabel(tDistance.get(i).getTime(), tDistance.get(i).getTime().toString());
       //  }
 
-        for (Integer i = 0; i <= maxTime; i++) {
+        for (Integer i = 0; i <= (maxTime/60 + 1) * 60; i++) {
             multiRenderer.addXTextLabel(i,i.toString());
             i = i + 4;
         }
