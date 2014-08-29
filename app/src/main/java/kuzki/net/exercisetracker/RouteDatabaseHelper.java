@@ -94,6 +94,16 @@ public class RouteDatabaseHelper extends SQLiteOpenHelper {
         Log.d(TAG, "New Route is added to DB with name: " + route.name);
     }
 
+    public Route getRoute(String routeName) {
+        List<Route> routeList = getRoutes();
+        for (Route r : routeList) {
+            if (r.name.equals(routeName)) {
+                return r;
+            }
+        }
+        return null;
+    }
+
     // Getting all routes
     public List<Route> getRoutes() {
         List<Route> routeList = new ArrayList<Route>();

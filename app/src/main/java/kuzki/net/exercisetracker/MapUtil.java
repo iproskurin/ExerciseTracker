@@ -25,11 +25,29 @@ public class MapUtil {
         }
     }
 
+    public static void drawRoute(GoogleMap map, Route route,  Route baseRoute) {
+        if (map == null) {
+            return;
+        }
+        map.clear();
+        if (route != null) {
+            drawPolyline(map, route);
+        }
+        if (baseRoute != null) {
+            drawPolyline(map, baseRoute);
+        }
+    }
+
     public static void drawRoute(GoogleMap map, Route route) {
         if (map == null) {
             return;
         }
         map.clear();
+        drawPolyline(map, route);
+
+    }
+
+    private static void drawPolyline(GoogleMap map, Route route) {
         PolylineOptions polyLine = new PolylineOptions().geodesic(true);
         for (Route.RoutePoint point : route.getPoints()) {
             polyLine.add(new LatLng(point.lat, point.lng));

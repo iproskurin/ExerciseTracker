@@ -35,12 +35,16 @@ public class RouteListActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        List<Route> routes = mDbHelper.getRoutes();
+        final List<Route> routes = mDbHelper.getRoutes();
         mRouteList.setAdapter(new ArrayAdapter<Route>(this, R.layout.route_list_item, routes));
         mRouteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.d(TAG, "onItemClicked: " + i);
+                Log.d(TAG, "onItemClicked: " + i + " name: " + routes.get(i).name);
+
+                Intent intent = MainActivity.createExistingRouteIntent(
+                        RouteListActivity.this, routes.get(i).name);
+                startActivity(intent);
             }
         });
     }
@@ -66,7 +70,7 @@ public class RouteListActivity extends Activity {
     }
 
     public void onAddNewRouteClicked(View view) {
-        Intent intent = MainActivity.createIntent(RouteListActivity.this);
+        Intent intent = MainActivity.createNewRouteIntent(RouteListActivity.this);
         startActivity(intent);
     }
 }
